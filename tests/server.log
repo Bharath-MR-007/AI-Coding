@@ -1,0 +1,45 @@
+INFO:     Started server process [46225]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:64939 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64960 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64960 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65035 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65048 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65050 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65054 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65284 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65301 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65303 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65307 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51259 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51259 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51260 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51260 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53455 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53478 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53482 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53486 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53489 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53498 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53500 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53507 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53512 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56226 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56305 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56307 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56316 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56318 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56320 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58178 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58195 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58203 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58311 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58312 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58556 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58557 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58578 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58579 - "POST /ask HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58675 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58676 - "POST /ask HTTP/1.1" 200 OK

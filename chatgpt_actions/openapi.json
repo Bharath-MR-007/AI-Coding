@@ -1,0 +1,326 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Local AI Actions API",
+    "description": "API for ChatGPT Actions to interact with local AI services and files",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Local AI Assistant",
+      "url": "http://localhost:8080"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://nonslip-nondangerously-braiden.ngrok-free.dev",
+      "description": "Secure HTTPS tunnel via ngrok"
+    }
+  ],
+  "paths": {
+    "/ask": {
+      "post": {
+        "summary": "Ask Local AI",
+        "description": "Send a question to the local Ollama AI model and get a response",
+        "operationId": "ask_local_ai",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              },
+              "example": {
+                "message": "Explain machine learning in simple terms",
+                "model": "llama3.2:latest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response from local AI",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                },
+                "example": {
+                  "response": "Machine learning is a type of artificial intelligence where computers learn patterns from data...",
+                  "model_used": "llama3.2:latest",
+                  "success": true,
+                  "processing_time": 2.5
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error from local AI service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["AI Interaction"]
+      }
+    },
+    "/read-file": {
+      "post": {
+        "summary": "Read Local File",
+        "description": "Read contents of a file from the local filesystem (restricted to AI-Coding directory)",
+        "operationId": "read_local_file",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadFileRequest"
+              },
+              "example": {
+                "filepath": "/Users/bharathmr/Documents/AI-Coding/README.md"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File read successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadFileResponse"
+                },
+                "example": {
+                  "content": "# AI Coding Project\n\nThis project contains...",
+                  "filepath": "/Users/bharathmr/Documents/AI-Coding/README.md",
+                  "size_bytes": 1024,
+                  "success": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied (file outside allowed directory)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["File Operations"]
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "Get Service Status",
+        "description": "Check the status of local AI services and available models",
+        "operationId": "get_service_status",
+        "responses": {
+          "200": {
+            "description": "Service status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusResponse"
+                },
+                "example": {
+                  "api_status": "running",
+                  "ollama_status": "connected",
+                  "available_models": ["llama3.2:latest", "codellama:latest"],
+                  "current_model": "llama3.2:latest",
+                  "server_info": {
+                    "version": "1.0.0",
+                    "uptime": "2 hours",
+                    "port": 8081
+                  },
+                  "success": true
+                }
+              }
+            }
+          }
+        },
+        "tags": ["System Status"]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AskRequest": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The question or prompt to send to the local AI",
+            "minLength": 1,
+            "maxLength": 4000,
+            "example": "What is artificial intelligence?"
+          },
+          "model": {
+            "type": "string",
+            "description": "Specific AI model to use (optional, defaults to llama3.2:latest)",
+            "example": "llama3.2:latest"
+          }
+        }
+      },
+      "AskResponse": {
+        "type": "object",
+        "required": ["response", "success"],
+        "properties": {
+          "response": {
+            "type": "string",
+            "description": "The response from the local AI model"
+          },
+          "model_used": {
+            "type": "string",
+            "description": "The AI model that generated this response"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Whether the request was successful"
+          },
+          "processing_time": {
+            "type": "number",
+            "description": "Time taken to process the request (in seconds)"
+          }
+        }
+      },
+      "ReadFileRequest": {
+        "type": "object",
+        "required": ["filepath"],
+        "properties": {
+          "filepath": {
+            "type": "string",
+            "description": "Absolute path to the file to read (must be within AI-Coding directory)",
+            "example": "/Users/bharathmr/Documents/AI-Coding/ai_core/simple_ai_client.py"
+          }
+        }
+      },
+      "ReadFileResponse": {
+        "type": "object",
+        "required": ["content", "filepath", "success"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The contents of the file"
+          },
+          "filepath": {
+            "type": "string",
+            "description": "The path of the file that was read"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "description": "Size of the file in bytes"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Whether the file was read successfully"
+          }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "required": ["api_status", "success"],
+        "properties": {
+          "api_status": {
+            "type": "string",
+            "enum": ["running", "error"],
+            "description": "Status of the Actions API server"
+          },
+          "ollama_status": {
+            "type": "string",
+            "enum": ["connected", "disconnected", "error"],
+            "description": "Status of the Ollama AI service"
+          },
+          "available_models": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of available AI models"
+          },
+          "current_model": {
+            "type": "string",
+            "description": "Currently selected default AI model"
+          },
+          "server_info": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "string",
+                "description": "API server version"
+              },
+              "uptime": {
+                "type": "string",
+                "description": "How long the server has been running"
+              },
+              "port": {
+                "type": "integer",
+                "description": "Port the server is running on"
+              }
+            }
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Whether the status check was successful"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error", "success"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "Always false for error responses"
+          },
+          "error_code": {
+            "type": "string",
+            "description": "Machine-readable error code"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Optional API key for authentication"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "AI Interaction",
+      "description": "Endpoints for interacting with local AI models"
+    },
+    {
+      "name": "File Operations", 
+      "description": "Endpoints for reading local files"
+    },
+    {
+      "name": "System Status",
+      "description": "Endpoints for checking service status"
+    }
+  ]
+}

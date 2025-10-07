@@ -1,0 +1,13 @@
+AI Technologies Test File
+=======================
+
+This file contains information about various AI technologies:
+
+1. OpenAI GPT - Large language model for text generation
+2. Ollama - Local AI model runner  
+3. Claude - AI assistant by Anthropic
+4. FastAPI - Web framework for building APIs
+5. MCP - Model Context Protocol for AI tool integration
+6. Python - Programming language for AI development
+
+File created for testing ChatGPT integration methods.

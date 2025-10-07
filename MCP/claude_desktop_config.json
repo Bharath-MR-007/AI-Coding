@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "local-project-file-context": {
+      "command": "/Users/bharathmr/Documents/AI-Coding/.AIvenv/bin/python",
+      "args": [
+        "/Users/bharathmr/Documents/AI-Coding/MCP/file_server.py"
+      ]
+    }
+  }
+}

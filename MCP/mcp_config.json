@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "local-project-file-context": {
+      "type": "stdio",
+      "command": "/Users/bharathmr/Documents/AI-Coding/.AIvenv/bin/python",
+      "args": [
+        "/Users/bharathmr/Documents/AI-Coding/MCP/file_server.py"
+      ],
+      "description": "A tool that securely retrieves context and content from local project files for use by the AI agent.",
+      "name": "ProjectFileContextReader"
+    }
+  }
+}
