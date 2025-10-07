@@ -1,43 +1,9 @@
-# Local AI Chatbot Service
+def ask_ollama(user_message):
+# Local AI Coding Platform
 
-A simple yet powerful AI chatbot service that runs locally using Ollama and FastAPI. This project provides both a simple script interface and a professional web API for interacting with AI models.
+A professional, privacy-first local AI platform for experimentation, education, and advanced integrations. Supports FastAPI, Ollama, LangChain RAG, ChatGPT Actions, Claude Desktop MCP, and more.
 
-## 🚀 Features
-
-- **Local AI Processing** - No API keys required, runs entirely on your machine
-- **Multiple Interfaces** - Simple Python scripts and REST API
-- **Privacy First** - Your conversations never leave your computer
-- **Fast Response** - Local processing means quick results
-- **Easy to Use** - Simple setup and intuitive interfaces
-
-## 📋 Prerequisites
-
-- Python 3.8 or higher
-- [Ollama](https://ollama.ai/) installed and running
-- At least one Ollama model (we use `llama3.2:latest`)
-
-## 🛠️ Installation
-
-1. **Clone or download the project files**
-
-2. **Create a virtual environment**
-   ```bash
-   python -m venv .AIvenv
-   source .AIvenv/bin/activate  # On Mac/Linux
-   # or
-   .AIvenv\Scripts\activate  # On Windows
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Make sure Ollama is running**
-   ```bash
-   ollama serve  # If not already running
-   ollama pull llama3.2:latest  # If you don't have the model
-   ```
+---
 
 ## 📁 Project Structure
 
@@ -50,7 +16,11 @@ AI-Coding/
 │   └── api_client_example.py      # API client usage example
 ├── docs/               # Project documentation
 │   ├── API_Documentation.md # Complete API reference
-│   └── PROGRAM_GUIDE.md     # Program usage guide
+│   ├── PROGRAM_GUIDE.md     # Program usage guide
+│   ├── DIRECTORY_STRUCTURE.md # Directory structure reference
+│   ├── GIT_WORKFLOW.md      # Git usage guide
+│   ├── GLOSSARY.md          # Technology glossary
+│   └── ...                  # Other documentation
 ├── tests/              # Testing and validation scripts
 │   ├── test_ai_connection.py      # AI connectivity tests
 │   ├── comprehensive_test.py      # Full system validation
@@ -68,212 +38,82 @@ AI-Coding/
 │   ├── chatgpt_demo.py             # Interactive demo
 │   ├── test_chatgpt_integration.py # Test suite
 │   └── CHATGPT_INTEGRATION_GUIDE.md # Complete guide
-└── README.md          # This documentation
+├── chatgpt_actions/    # ChatGPT Actions API & guides
+│   ├── actions_api_server.py       # FastAPI server for Actions
+│   ├── openapi.json               # OpenAPI schema for Actions
+│   ├── ACTIONS_SETUP_GUIDE.md     # Setup guide for Actions
+│   ├── NGROK_SETUP.md             # ngrok setup guide
+│   └── ...                        # Other integration docs
+├── LangChain/          # Local RAG (LangChain + Ollama + Streamlit)
+│   ├── rag_app.py                # Streamlit RAG app
+│   ├── requirements.txt          # Dependencies for RAG app
+│   ├── README.md                 # RAG app usage guide
+│   └── USAGE_GUIDE.md            # Step-by-step usage instructions
+├── .AIvenv/            # Python virtual environment
+└── README.md           # This documentation
 ```
-
-## 🎯 Usage
-
-### Simple Script Usage
-
-**Run the educational tutorial:**
-```bash
-python ai_core/educational_ai_example.py
-```
-
-**Run the simple client:**
-```bash
-python ai_core/simple_ai_client.py
-```
-
-**Use in your own code:**
-```python
-import requests
-
-def ask_ollama(user_message):
-    payload = {
-        "model": "llama3.2:latest",
-        "prompt": f"You are a helpful assistant. User: {user_message}\nAssistant:",
-        "stream": False
-    }
-    response = requests.post("http://localhost:11434/api/generate", json=payload)
-    return response.json()["response"]
-
-# Ask the AI anything
-answer = ask_ollama("What is machine learning?")
-print(answer)
-```
-
-### Web API Service
-
-**Start the API service:**
-```bash
-cd ai_core && python ai_web_service.py
-# or alternatively:
-python -m uvicorn ai_core.ai_web_service:app --reload --port 8000
-```
-
-**Test with curl:**
-```bash
-curl -X POST "http://localhost:8000/ask" \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Hello AI!"}'
-```
-
-**Use in Python:**
-```python
-import requests
-
-response = requests.post("http://localhost:8000/ask", 
-                        json={"message": "Hello AI!"})
-print(response.json())
-```
-
-**Interactive API documentation:**
-Open your browser and visit: `http://localhost:8000/docs`
-
-## 🔧 API Reference
-
-### POST /ask
-
-Send a message to the AI and receive a response.
-
-**Request Body:**
-```json
-{
-  "message": "Your question here"
-}
-```
-
-**Response:**
-```json
-{
-  "response": "AI's answer here"
-}
-```
-
-**Example:**
-```bash
-curl -X POST "http://localhost:8000/ask" \
-     -H "Content-Type: application/json" \
-     -d '{"message": "What is the capital of France?"}'
-```
-
-**Response:**
-```json
-{
-  "response": "The capital of France is Paris."
-}
-```
-
-## 🛠️ Customization
-
-### Change AI Model
-
-Edit the model name in any of the files:
-```python
-"model": "llama3.2:latest"  # Change to your preferred model
-```
-
-Available models (install with `ollama pull <model-name>`):
-- `llama3.2:latest` - General purpose, good balance
-- `llama3.2:3b` - Smaller, faster model
-- `codellama` - Optimized for coding tasks
-- `mistral` - Another excellent general model
-
-### Modify AI Behavior
-
-Change the system prompt in the payload:
-```python
-"prompt": f"You are a helpful assistant. User: {user_message}\nAssistant:"
-```
-
-Examples:
-- `"You are a coding expert. Help with programming questions."`
-- `"You are a creative writer. Help write stories and poems."`
-- `"You are a helpful teacher. Explain concepts simply."`
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-**"Connection refused" or "Failed to connect"**
-- Make sure Ollama is running: `ollama serve`
-- Check if the model exists: `ollama list`
-
-**"Model not found"**
-- Install the model: `ollama pull llama3.2:latest`
-
-**"Module not found" errors**
-- Activate virtual environment: `source .AIvenv/bin/activate`
-- Install dependencies: `pip install -r config/requirements.txt`
-
-**API service won't start**
-- Check if port 8000 is already in use
-- Try a different port: `cd ai_core && python -c "import uvicorn; uvicorn.run('ai_web_service:app', port=8001)"`
-
-### Checking Service Status
-
-```bash
-# Check if Ollama is running
-curl http://localhost:11434/api/tags
-
-# Check if API service is running
-curl http://localhost:8000/docs
-
-# List running processes
-ps aux | grep ollama
-ps aux | grep uvicorn
-```
-
-## 📊 Performance Tips
-
-- **Use smaller models** (`llama3.2:3b`) for faster responses
-- **Increase RAM** if running larger models
-- **Use SSD storage** for better model loading times
-- **Close other applications** when running large models
-
-## 🔗 Advanced Integrations
-
-### Claude Desktop MCP (Model Context Protocol)
-Located in `MCP/` folder - enables Claude Desktop to read local files securely.
-
-### ChatGPT Integration Alternatives
-Located in `chatGpt_MCP/` folder - provides multiple ways to share files with ChatGPT:
-
-- **Upload Interface**: Web-based file upload with copy-to-clipboard functionality
-- **REST API**: Programmatic file access for automation
-- **Manual Method**: Simple copy-paste workflow
-
-**Quick Start:**
-```bash
-cd chatGpt_MCP/
-python chatgpt_upload_interface.py  # Web interface on port 8002
-# or
-python chatgpt_file_api.py          # REST API on port 8001
-```
-
-See `chatGpt_MCP/CHATGPT_INTEGRATION_GUIDE.md` for complete setup instructions.
-
-## 🤝 Contributing
-
-Feel free to:
-- Add new features
-- Improve documentation
-- Report bugs
-- Suggest enhancements
-
-## 📝 License
-
-This project is open source and available under the MIT License.
-
-## 🙋‍♂️ Support
-
-If you have questions or issues:
-1. Check the troubleshooting section
-2. Verify Ollama is running properly
-3. Make sure all dependencies are installed
-4. Check the terminal for error messages
 
 ---
 
-**Happy AI chatting!** 🤖✨
+## � Features
+- Local AI processing (no API keys required)
+- FastAPI web API and Python script interfaces
+- Privacy-first: all data stays on your machine
+- LangChain RAG demo (upload your own docs, ask questions)
+- ChatGPT Actions and Claude Desktop MCP integrations
+- Easy onboarding, professional documentation, and troubleshooting guides
+
+---
+
+## 🛠️ Quickstart
+
+1. **Clone the repository**
+2. **Create a virtual environment**
+  ```bash
+  python -m venv .AIvenv
+  source .AIvenv/bin/activate
+  ```
+3. **Install dependencies**
+  ```bash
+  pip install -r config/requirements.txt
+  pip install -r LangChain/requirements.txt  # For RAG app
+  ```
+4. **Start Ollama**
+  ```bash
+  ollama serve
+  ollama pull llama3
+  ```
+5. **Run FastAPI server**
+  ```bash
+  cd ai_core && python ai_web_service.py
+  # or
+  python -m uvicorn ai_core.ai_web_service:app --reload --port 8000
+  ```
+6. **Try the RAG app**
+  ```bash
+  streamlit run LangChain/rag_app.py
+  ```
+
+---
+
+## � Documentation
+- See `docs/` for API reference, guides, and troubleshooting
+- See `LangChain/README.md` for RAG app usage
+- See `chatgpt_actions/ACTIONS_SETUP_GUIDE.md` for ChatGPT Actions
+- See `MCP/` for Claude Desktop integration
+
+---
+
+## 🤝 Contributing
+- Fork, branch, and submit PRs
+- See `docs/GIT_WORKFLOW.md` for workflow
+- All contributions welcome!
+
+---
+
+## 📝 License
+MIT License
+
+---
+
+**Happy AI building!** 🚀🤖
