@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timedelta
 
 # --- CONFIG ---
-WEBHOOK_URL = "http://localhost:8080/alert"  # Change this to your webhook receiver
+WEBHOOK_URL = "http://localhost:8200/alert"  # Change this to your webhook receiver
 SEND_INTERVAL = 10  # seconds between alerts
 
 # --- SAMPLE ALERT TYPES ---

@@ -38,7 +38,7 @@ This will listen for alerts and print both the alert and the LLM's troubleshooti
 python webhook_receiver.py
 ```
 
-- The receiver listens on `http://localhost:8080/alert` (POST only).
+- The receiver listens on `http://localhost:8200/alert` (POST only).
 - Alerts received are printed in the terminal.
 - Each alert is sent to Ollama (default: `llama3` at `http://localhost:11434/api/generate`).
 - The LLM's response is printed after each alert.
@@ -50,7 +50,7 @@ In a separate terminal:
 python alert_simulator.py
 ```
 
-- Sends a random alert every 10 seconds to the webhook receiver.
+- Sends a random alert every 10 seconds to the webhook receiver (now on port 8200).
 - You can adjust the interval and webhook URL in the script.
 
 ---
@@ -95,7 +95,7 @@ pip install -r requirements.txt
 When you run both scripts, your webhook receiver terminal will show output like this:
 
 ```
-🔔 Starting webhook receiver on http://localhost:8080/alert
+🔔 Starting webhook receiver on http://localhost:8200/alert
 
 🚨 Received alert:
 {'receiver': 'web.hook', 'status': 'firing', 'alerts': [{'status': 'active', 'labels': {'alertname': 'HighAPILatency', 'severity': 'critical', 'prometheus': 'labmuc-sysm-dpg-01'}, 'annotations': {'summary': 'High API latency detected', 'description': '95th percentile latency for target http://labmuc-sysm-gnm-02.lan.ts-ian.net/nnm is greater than 500ms for the last 5 minutes.'}, 'startsAt': '2025-10-14T12:12:39.705766Z', 'endsAt': '2025-10-14T12:22:39.705766Z', 'generatorURL': 'http://prometheus.example.com/graph', 'fingerprint': 'bbcb9e18e30f6155'}], 'groupLabels': {'alertname': 'HighAPILatency'}, 'commonLabels': {'severity': 'critical'}, 'commonAnnotations': {'summary': 'High API latency detected'}, 'externalURL': 'http://alertmanager.example.com', 'version': '4', 'groupKey': '{alertname="HighAPILatency"}'}
