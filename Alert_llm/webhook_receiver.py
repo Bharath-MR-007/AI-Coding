@@ -1,16 +1,26 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import requests
+import json
+from datetime import datetime
 
 app = Flask(__name__)
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3"  # Change to your preferred model name
+OLLAMA_MODELS = ["llama3"]  # Add more models for multi-model reasoning
+ALERT_LOG_FILE = "alert_log.json"
 
 
-def get_ollama_response(alert_summary):
-    prompt = f"You are an expert SRE. Given this alert, provide troubleshooting steps and a possible root cause analysis (RCA):\n\n{alert_summary}\n\nRespond with clear, actionable steps and a short RCA."
+def get_ollama_response(alert_summary, model):
+    prompt = (
+        "You are an expert SRE. Given this alert, provide a structured response in JSON with these fields:\n"
+        "1. troubleshooting_steps: List of immediate troubleshooting steps\n"
+        "2. possible_root_causes: List of possible root causes\n"
+        "3. recommended_actions: List of next actions\n"
+        f"\nAlert details:\n{alert_summary}\n"
+        "Respond ONLY with a valid JSON object."
+    )
     payload = {
-        "model": OLLAMA_MODEL,
+        "model": model,
         "prompt": prompt,
         "stream": False
     }
@@ -23,6 +33,11 @@ def get_ollama_response(alert_summary):
             return f"[Ollama error: {response.status_code} {response.text}]"
     except Exception as e:
         return f"[Ollama exception: {e}]"
+
+
+def log_alert(alert_data):
+    with open(ALERT_LOG_FILE, "a") as f:
+        f.write(json.dumps(alert_data) + "\n")
 
 
 @app.route('/alert', methods=['POST'])
@@ -38,16 +53,54 @@ def alert():
         description = alert["annotations"].get("description", "")
         alertname = alert["labels"].get("alertname", "")
         severity = alert["labels"].get("severity", "")
-        alert_summary = f"Alert: {alertname}\nSeverity: {severity}\nSummary: {summary}\nDescription: {description}"
+        region = alert["labels"].get("region", "")
+        instance = alert["labels"].get("instance", "")
+        alert_summary = (
+            f"Alert: {alertname}\nSeverity: {severity}\nRegion: {region}\nInstance: {instance}\n"
+            f"Summary: {summary}\nDescription: {description}"
+        )
     except Exception:
         alert_summary = str(data)
 
-    print("\n🤖 Sending to Ollama for troubleshooting and RCA...")
-    ollama_response = get_ollama_response(alert_summary)
-    print("\n🧠 Ollama Response:")
-    print(ollama_response)
+    model_responses = {}
+    for model in OLLAMA_MODELS:
+        print(f"\n🤖 Sending to Ollama ({model}) for structured RCA...")
+        raw_response = get_ollama_response(alert_summary, model)
+        # Try to extract JSON from Markdown code block or extra text
+        import re
+        def extract_json(text):
+            # Look for JSON inside triple backticks
+            match = re.search(r"```(?:json)?\s*([\s\S]+?)\s*```", text)
+            if match:
+                candidate = match.group(1)
+            else:
+                # Fallback: try to find first curly brace and parse from there
+                idx = text.find('{')
+                if idx != -1:
+                    candidate = text[idx:]
+                else:
+                    candidate = text
+            try:
+                return json.loads(candidate)
+            except Exception:
+                return {"error": "Could not parse LLM response as JSON", "raw": text}
 
-    return "OK", 200
+        structured = extract_json(raw_response)
+        model_responses[model] = structured
+        print(f"\n🧠 Ollama ({model}) Response:")
+        print(json.dumps(structured, indent=2))
+
+    # Log alert and all model responses
+    log_entry = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "alert": data,
+        "model_responses": model_responses
+    }
+    log_alert(log_entry)
+
+    # Return structured JSON to client
+    return jsonify(log_entry), 200
+
 
 if __name__ == "__main__":
     print("🔔 Starting webhook receiver on http://localhost:8200/alert")

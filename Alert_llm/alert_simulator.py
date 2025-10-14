@@ -3,10 +3,18 @@ import random
 import time
 import json
 from datetime import datetime, timedelta
+import threading
 
 # --- CONFIG ---
 WEBHOOK_URL = "http://localhost:8200/alert"  # Change this to your webhook receiver
 SEND_INTERVAL = 10  # seconds between alerts
+ALERT_LOG_FILE = "alerts_log.json"
+
+REGIONS = ["us-east-1", "eu-west-1", "ap-south-1", "us-west-2"]
+INSTANCES = [
+    "prod-app-01", "prod-app-02", "db-primary-01", "db-replica-01",
+    "edge-gateway-01", "edge-gateway-02", "cache-01", "cache-02"
+]
 
 # --- SAMPLE ALERT TYPES ---
 ALERT_TEMPLATES = [
@@ -42,8 +50,12 @@ ALERT_TEMPLATES = [
     }
 ]
 
+all_alerts = []  # For exporting to JSON
+
 def generate_alert_payload(alert_template, status="active"):
     now = datetime.utcnow()
+    region = random.choice(REGIONS)
+    instance = random.choice(INSTANCES)
     payload = {
         "receiver": "web.hook",
         "status": "firing" if status == "active" else "resolved",
@@ -53,14 +65,16 @@ def generate_alert_payload(alert_template, status="active"):
                 "labels": {
                     "alertname": alert_template["alertname"],
                     "severity": alert_template["severity"],
+                    "region": region,
+                    "instance": instance,
                     "prometheus": "labmuc-sysm-dpg-01"
                 },
                 "annotations": {
                     "summary": alert_template["summary"],
                     "description": alert_template["description"]
                 },
-                "startsAt": (now - timedelta(minutes=5)).isoformat() + "Z",
-                "endsAt": (now + timedelta(minutes=5)).isoformat() + "Z",
+                "startsAt": (now - timedelta(minutes=random.randint(1, 10))).isoformat() + "Z",
+                "endsAt": (now + timedelta(minutes=random.randint(5, 15))).isoformat() + "Z",
                 "generatorURL": "http://prometheus.example.com/graph",
                 "fingerprint": hex(random.getrandbits(64))[2:]
             }
@@ -74,30 +88,52 @@ def generate_alert_payload(alert_template, status="active"):
     }
     return payload
 
-def send_alert():
+def send_alert(thread_id=1):
     alert_template = random.choice(ALERT_TEMPLATES)
     # 80% chance of firing, 20% chance of resolved
     status = "active" if random.random() > 0.2 else "resolved"
     payload = generate_alert_payload(alert_template, status)
+    all_alerts.append(payload)
 
-    print(f"\n🚨 Sending {status.upper()} alert: {alert_template['alertname']}")
-    response = requests.post(WEBHOOK_URL, json=payload)
-    if response.status_code == 200 or response.status_code == 201:
-        print(f"✅ Alert sent successfully to {WEBHOOK_URL}")
-    else:
-        print(f"❌ Failed to send alert ({response.status_code}): {response.text}")
+    print(f"\n[Thread {thread_id}] 🚨 Sending {status.upper()} alert: {alert_template['alertname']}")
+    try:
+        response = requests.post(WEBHOOK_URL, json=payload)
+        if response.status_code == 200 or response.status_code == 201:
+            print(f"✅ Alert sent successfully to {WEBHOOK_URL}")
+        else:
+            print(f"❌ Failed to send alert ({response.status_code}): {response.text}")
+    except Exception as e:
+        print(f"❌ Exception sending alert: {e}")
 
     # Print JSON for debugging
     print(json.dumps(payload, indent=2))
 
+def alert_thread(thread_id):
+    print(f"[Thread {thread_id}] Started.")
+    try:
+        while True:
+            send_alert(thread_id)
+            time.sleep(SEND_INTERVAL + random.randint(-2, 2))
+    except KeyboardInterrupt:
+        print(f"[Thread {thread_id}] Stopped.")
+
 if __name__ == "__main__":
-    print("🔧 Starting Alertmanager Webhook Simulator...")
+    print("🔧 Starting Alertmanager Webhook Simulator (multi-threaded)...")
     print(f"Target Webhook: {WEBHOOK_URL}")
     print("Press Ctrl+C to stop.\n")
 
+    threads = []
+    num_threads = 2  # Simulate 2 concurrent alert sources
+    for i in range(num_threads):
+        t = threading.Thread(target=alert_thread, args=(i+1,), daemon=True)
+        threads.append(t)
+        t.start()
+
     try:
         while True:
-            send_alert()
-            time.sleep(SEND_INTERVAL)
+            time.sleep(1)
     except KeyboardInterrupt:
-        print("\n🛑 Stopped alert simulation.")
+        print("\n🛑 Stopped alert simulation. Exporting alerts to alerts_log.json...")
+        with open(ALERT_LOG_FILE, "w") as f:
+            json.dump(all_alerts, f, indent=2)
+        print(f"Exported {len(all_alerts)} alerts to {ALERT_LOG_FILE}")

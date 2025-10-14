@@ -2,10 +2,12 @@
 
 A minimal Python project to simulate alert generation and receive alerts via a webhook, with automated troubleshooting and RCA suggestions using a local Ollama LLM.
 
+
 ## Features
-- **alert_simulator.py**: Periodically sends realistic alert payloads to a webhook endpoint.
-- **webhook_receiver.py**: Receives alerts, prints them, and queries a local Ollama LLM for troubleshooting and root cause analysis (RCA) suggestions.
-- **Ollama LLM Integration**: Automatically sends alert summaries to a local LLM (e.g., llama3) for expert SRE advice.
+- **alert_simulator.py**: Periodically sends realistic alert payloads (with region, instance, timestamps, and random recovery) to a webhook endpoint. All generated alerts are exported to `alerts_log.json` for future analysis or Grafana ingestion.
+- **webhook_receiver.py**: Receives alerts, prints them, queries a local Ollama LLM for troubleshooting and root cause analysis (RCA) suggestions, and logs every alert and LLM response to `alert_log.json`.
+- **Robust LLM Output Parsing**: The receiver automatically extracts and parses JSON from LLM responses, even if wrapped in Markdown code blocks or extra text, ensuring reliable structured output.
+- **Ollama LLM Integration**: Automatically sends alert summaries to a local LLM (e.g., llama3) for expert SRE advice. Multi-model support is ready for future expansion.
 
 ---
 
@@ -31,8 +33,9 @@ pip install -r requirements.txt
 
 ## Usage
 
+
 ### Start the Webhook Receiver
-This will listen for alerts and print both the alert and the LLM's troubleshooting/RCA response.
+This will listen for alerts, print them, query the LLM, and log all activity.
 
 ```
 python webhook_receiver.py
@@ -41,7 +44,8 @@ python webhook_receiver.py
 - The receiver listens on `http://localhost:8200/alert` (POST only).
 - Alerts received are printed in the terminal.
 - Each alert is sent to Ollama (default: `llama3` at `http://localhost:11434/api/generate`).
-- The LLM's response is printed after each alert.
+- The LLM's response is printed after each alert and logged to `alert_log.json` along with the original alert and timestamp.
+- The receiver robustly extracts JSON from LLM responses, even if wrapped in Markdown code blocks or extra text.
 
 ### Start the Alert Simulator
 In a separate terminal:
@@ -90,6 +94,7 @@ pip install -r requirements.txt
 
 ---
 
+
 ## Sample Output
 
 When you run both scripts, your webhook receiver terminal will show output like this:
@@ -98,28 +103,32 @@ When you run both scripts, your webhook receiver terminal will show output like 
 🔔 Starting webhook receiver on http://localhost:8200/alert
 
 🚨 Received alert:
-{'receiver': 'web.hook', 'status': 'firing', 'alerts': [{'status': 'active', 'labels': {'alertname': 'HighAPILatency', 'severity': 'critical', 'prometheus': 'labmuc-sysm-dpg-01'}, 'annotations': {'summary': 'High API latency detected', 'description': '95th percentile latency for target http://labmuc-sysm-gnm-02.lan.ts-ian.net/nnm is greater than 500ms for the last 5 minutes.'}, 'startsAt': '2025-10-14T12:12:39.705766Z', 'endsAt': '2025-10-14T12:22:39.705766Z', 'generatorURL': 'http://prometheus.example.com/graph', 'fingerprint': 'bbcb9e18e30f6155'}], 'groupLabels': {'alertname': 'HighAPILatency'}, 'commonLabels': {'severity': 'critical'}, 'commonAnnotations': {'summary': 'High API latency detected'}, 'externalURL': 'http://alertmanager.example.com', 'version': '4', 'groupKey': '{alertname="HighAPILatency"}'}
+{ ...alert JSON... }
 
-🤖 Sending to Ollama for troubleshooting and RCA...
+🤖 Sending to Ollama (llama3) for structured RCA...
 
-🧠 Ollama Response:
-1. Check the API server logs for errors or slow queries.
-2. Review recent deployments or configuration changes.
-3. Monitor network latency between client and server.
-4. Investigate backend dependencies (databases, external APIs).
-
-RCA: High API latency is often caused by backend bottlenecks, network issues, or recent changes in the application stack.
+🧠 Ollama (llama3) Response:
+{
+  "troubleshooting_steps": [ ... ],
+  "possible_root_causes": [ ... ],
+  "recommended_actions": [ ... ]
+}
 
 127.0.0.1 - - [14/Oct/2025 17:47:39] "POST /alert HTTP/1.1" 200 -
 ```
 
-You will see a new block for each alert, with the LLM's troubleshooting steps and RCA printed after every alert received.
+You will see a new block for each alert, with the LLM's structured troubleshooting steps, root causes, and recommended actions printed and logged after every alert received.
+
+If the LLM response is not valid JSON (e.g., wrapped in Markdown code blocks), the receiver will automatically extract and parse the JSON. If parsing still fails, the raw LLM output and error will be logged for troubleshooting.
 
 ---
+
 
 ## Notes
 - The webhook endpoint only accepts POST requests. Accessing it via browser (GET) will show "Method Not Allowed".
 - All code is in the `Alert_llm` folder.
+- All received alerts and LLM responses are logged to `alert_log.json` (receiver) and `alerts_log.json` (simulator) for audit and analysis.
+- The receiver is robust to LLM output formatting issues and will log any parsing errors for further debugging.
 - You can extend the receiver to forward alerts to other systems, store results, or trigger automations.
 
 ---
