@@ -49,6 +49,11 @@ AI-Coding/
 │   ├── requirements.txt          # Dependencies for RAG app
 │   ├── README.md                 # RAG app usage guide
 │   └── USAGE_GUIDE.md            # Step-by-step usage instructions
+├── Alert_llm/          # Alert simulation & LLM troubleshooting
+│   ├── alert_simulator.py        # Sends simulated alerts
+│   ├── webhook_receiver.py       # Receives alerts, queries LLM
+│   ├── requirements.txt          # Python dependencies
+│   └── README.md                 # Project documentation & sample output
 ├── .AIvenv/            # Python virtual environment
 └── README.md           # This documentation
 ```
@@ -101,6 +106,22 @@ AI-Coding/
 - See `LangChain/README.md` for RAG app usage
 - See `chatgpt_actions/ACTIONS_SETUP_GUIDE.md` for ChatGPT Actions
 - See `MCP/` for Claude Desktop integration
+
+---
+
+## 📦 Project Highlights
+
+### Alert_llm: Automated Alert Simulation & LLM Troubleshooting
+
+A self-contained Python mini-project for simulating alerts and receiving automated troubleshooting/RCA suggestions from a local Ollama LLM.
+
+- **Location:** `Alert_llm/`
+- **Features:**
+  - Simulates realistic alerts and sends them to a webhook
+  - Receives alerts, prints them, and queries a local LLM for troubleshooting/root cause analysis
+  - Includes a sample output in its own README
+- **How to use:**
+  - See [`Alert_llm/README.md`](./Alert_llm/README.md) for setup, usage, and sample output
 
 ---
 
