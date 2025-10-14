@@ -43,3 +43,7 @@ INFO:     127.0.0.1:58578 - "GET /docs HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58579 - "POST /ask HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58675 - "GET /docs HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58676 - "POST /ask HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [46225]

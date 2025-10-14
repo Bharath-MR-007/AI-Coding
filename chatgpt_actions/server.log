@@ -25,3 +25,7 @@ INFO:     20.235.75.211:0 - "POST /ask HTTP/1.1" 200 OK
 INFO:     52.255.111.3:0 - "GET /status HTTP/1.1" 200 OK
 INFO:     52.255.111.8:0 - "POST /read-file HTTP/1.1" 200 OK
 INFO:     52.255.111.11:0 - "POST /read-file HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16517]

@@ -128,7 +128,7 @@ async def read_local_file(request: FileRequest):
         file_path = Path(request.filepath)
         
         # Security: Only allow files within the AI-Coding project
-        allowed_base = Path("/Users/bharathmr/Documents/AI-Coding")
+        allowed_base = Path(os.environ.get("AI_CODING_BASE_DIR", "/Users/bharathmr/Documents/AI-Coding"))
         try:
             # Check if file is within allowed directory
             file_path.resolve().relative_to(allowed_base.resolve())
