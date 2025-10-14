@@ -12,6 +12,7 @@ AI-Coding/
 ├── config/             # ⚙️ Configuration Files
 ├── MCP/                # 🔗 Claude Desktop MCP Integration
 ├── chatGpt_MCP/        # 💬 ChatGPT Integration Alternatives
+├── Alert_llm/          # 🚨 Alert simulation & LLM troubleshooting
 ├── .AIvenv/            # 🐍 Python Virtual Environment
 └── README.md           # 📖 Main Project Documentation
 ```
@@ -73,6 +74,16 @@ Alternative file sharing solutions for ChatGPT:
 
 **Purpose:** Provides ChatGPT file integration when Claude limits are exceeded
 
+### `Alert_llm/` - Alert Simulation & LLM Troubleshooting
+A self-contained mini-project for simulating alerts and receiving automated troubleshooting/RCA suggestions from a local Ollama LLM.
+
+- **`alert_simulator.py`** - Sends simulated alerts to a webhook
+- **`webhook_receiver.py`** - Receives alerts, queries LLM for troubleshooting
+- **`requirements.txt`** - Python dependencies
+- **`README.md`** - Project documentation & sample output
+
+**Purpose:** Demonstrates AI-driven troubleshooting by integrating alert simulation with a local LLM for actionable SRE advice.
+
 ---
 
 ## 🚀 Quick Commands by Directory
@@ -111,6 +122,15 @@ python MCP/file_server.py
 # ChatGPT alternatives
 python chatGpt_MCP/chatgpt_upload_interface.py
 python chatGpt_MCP/chatgpt_file_api.py
+```
+
+### Alert Simulation & Troubleshooting (`Alert_llm/`)
+```bash
+# Simulate alerts
+python Alert_llm/alert_simulator.py
+
+# Receive and troubleshoot alerts
+python Alert_llm/webhook_receiver.py
 ```
 
 ---
